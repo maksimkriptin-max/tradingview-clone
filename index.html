@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My TradingView Clone</title>
+  <style>
+    /* TradingView style */
+    body, html {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+    .ticker {
+      background-color: #f2f2f2;
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 10px;
+    }
+    .price {
+      font-size: 1.5em;
+      font-weight: bold;
+    }
+    .time {
+      color: #888;
+    }
+    .real-time-update {
+      background: #007bff;
+      color: #fff;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="ticker" id="ticker">
+    <div class="price">?</div>
+    <div class="time">?</div>
+  </div>
+  <div class="real-time-update" id="real-time-update">?</div>
+  <script>
+    function fetchRealTimeData() {
+      fetch('https://api.example.com/data') // Replace with your actual API
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById('ticker').innerHTML = `
+            <div class="price">${data.price}</div>
+            <div class="time">${data.time}</div>
+          `;
+          document.getElementById('real-time-update').innerText = `Real-time Update: ${data.update}`;
+        })
+        .catch(error=> console.error('Error fetching data:', error));
+    }
+
+    function fetchNewsData() {
+      fetch('https://news.example.com/api/news?category=finance') // Replace with your actual API
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById('news').innerHTML = `
+            <ul>
+              ${data.news.map(news => `
+                <li>${news.title} - ${news.author} - ${news.published}</li>
+              `).join('')}
+            </ul>
+          `;
+        })
+        .catch(error => console.error('Error fetching news:', error));
+    }
+
+    function fetchBollingerBands() {
+      fetch('https://api.example.com/data') // Replace with your actual API
+        .then(response => response.json())
+        .then(data => {
+          let bollingerBands = ta.getBollingerBands(data.price, {
+            periods: 20, // Number of periods
+            stdDev: 2 // Number of standard deviations
+          });
+
+          let price = data.price;
+          let lowerBand = bollingerBands.lowerBand;
+          let upperBand = bollingerBands.upperBand;
+
+          document.getElementById('ticker').innerHTML = `
+            <div class="price">${price}</div>
+            <div class="time">${data.time}</div>
+          `;
+          document.getElementById('real-time-update').innerText = `Real-time Update: ${data.update}`;
+          document.getElementById('bollingerBands').innerText = `
+            Lower Band: ${lowerBand}
+            Upper Band: ${upperBand}
+          `;
+        })
+        .catch(error => console.error('Error fetching data:', error));
+    }
+
+    setInterval(fetchRealTimeData, 10000); // Fetch every 10 seconds
+    setInterval(fetchNewsData, 60000 * 60); // Fetch every 60 minutes
+    setInterval(fetchBollingerBands, 10000); // Fetch every 10 seconds
+  </script>
+</body>
+</html>
